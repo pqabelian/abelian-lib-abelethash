@@ -2,6 +2,10 @@
 // Copyright 2018 Pawel Bylica.
 // SPDX-License-Identifier: Apache-2.0
 
+// abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+// Copyright 2022-2023 Abelian Foundation.
+// SPDX-License-Identifier: Apache-2.0
+
 #include "../support/attributes.h"
 #include <ethash/keccak.h>
 
@@ -342,7 +346,9 @@ static inline ALWAYS_INLINE void keccak(
         ++data;
         --size;
     }
-    *last_word_iter = 0x01;
+    // use 0x06, so that keccak is actually the standard SHA3
+    // *last_word_iter = 0x01;
+    *last_word_iter = 0x06;
     *state_iter ^= to_le64(last_word);
 
     state[(block_size / word_size) - 1] ^= 0x8000000000000000;
