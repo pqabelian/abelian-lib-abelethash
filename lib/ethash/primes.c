@@ -1,10 +1,19 @@
 // ethash: C/C++ implementation of Ethash, the Ethereum Proof of Work algorithm.
 // Copyright 2018 Pawel Bylica.
 // Licensed under the Apache License, Version 2.0.
+
+
+/* abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+ * Copyright 2022-2023 Abelian Foundation.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+
 #include "primes.h"
 #include <stdbool.h>
 
 /// Checks if the number is prime. Requires the number to be > 2 and odd.
+//  todo: This function should be optimized.
 static inline bool is_odd_prime(int number)
 {
     // Check factors up to sqrt(number) by doing comparison d*d <= number with 64-bit precision.

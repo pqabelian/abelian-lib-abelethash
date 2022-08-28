@@ -2,6 +2,12 @@
 // Copyright 2018-2019 Pawel Bylica.
 // Licensed under the Apache License, Version 2.0.
 
+/* abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+ * Copyright 2022-2023 Abelian Foundation.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+
 #include "ethash-internal.hpp"
 
 #include "primes.h"
@@ -13,10 +19,15 @@ namespace ethash
 {
 // Internal constants:
 constexpr static int light_cache_init_size = 1 << 24;
-constexpr static int light_cache_growth = 1 << 17;
+//constexpr static int light_cache_growth = 1 << 17;
+constexpr static int light_cache_growth = 1 << 18;
+constexpr static int light_cache_growth_fast = 1 << 23;
 constexpr static int light_cache_rounds = 3;
+
 constexpr static int full_dataset_init_size = 1 << 30;
-constexpr static int full_dataset_growth = 1 << 23;
+//constexpr static int full_dataset_growth = 1 << 23;
+constexpr static int full_dataset_growth = 1 << 24;
+constexpr static int full_dataset_growth_fast = 1 << 29;
 constexpr static int full_dataset_item_parents = 256;
 
 // Verify constants:
@@ -59,16 +70,20 @@ int find_epoch_number(const hash256& seed) noexcept
 {
     // Thread-local cache of the last search.
     static thread_local int cached_epoch_number = 0;
-    static thread_local hash256 cached_seed = {};
+    // static thread_local hash256 cached_seed = {};
+    const uint8_t* const ethashseedstr = reinterpret_cast<const uint8_t*>(ethash_seed_str);
+    static thread_local hash256 cached_seed = keccak256(ethashseedstr, strlen(ethash_seed_str));
 
     // Load from memory once (memory will be clobbered by keccak256()).
     const uint32_t seed_part = seed.word32s[0];
     const int e = cached_epoch_number;
     hash256 s = cached_seed;
 
+    //  todo: why use only the first 32 bits to check the equality? By investigation, the seeds for the epochs with number <= max_epoch_number do not have repeated first 32 bits.
     if (s.word32s[0] == seed_part)
         return e;
 
+    //  todo: why try the case e=1 (and the above case e=0) here? this should be able to handle in the loop below.
     // Try the next seed, will match for sequential epoch access.
     s = keccak256(s);
     if (s.word32s[0] == seed_part)
@@ -79,7 +94,8 @@ int find_epoch_number(const hash256& seed) noexcept
     }
 
     // Search for matching seed starting from epoch 0.
-    s = {};
+    // s = {};
+    s = keccak256(ethashseedstr, strlen(ethash_seed_str));
     for (int i = 0; i <= max_epoch_number; ++i)
     {
         if (s.word32s[0] == seed_part)
@@ -399,7 +415,10 @@ extern "C" {
 
 ethash_hash256 ethash_calculate_epoch_seed(int epoch_number) noexcept
 {
-    ethash_hash256 epoch_seed = {};
+    // ethash_hash256 epoch_seed = {};
+    const uint8_t* const ethashseedstr = reinterpret_cast<const uint8_t*>(ethash_seed_str);
+    ethash_hash256 epoch_seed = ethash_keccak256(ethashseedstr, strlen(ethash_seed_str));
+
     for (int i = 0; i < epoch_number; ++i)
         epoch_seed = ethash_keccak256_32(epoch_seed.bytes);
     return epoch_seed;
@@ -410,15 +429,26 @@ int ethash_calculate_light_cache_num_items(int epoch_number) noexcept
     constexpr int item_size = sizeof(hash512);
     constexpr int num_items_init = light_cache_init_size / item_size;
     constexpr int num_items_growth = light_cache_growth / item_size;
+    constexpr int num_items_growth_fast = light_cache_growth_fast / item_size;
+
     static_assert(
         light_cache_init_size % item_size == 0, "light_cache_init_size not multiple of item size");
     static_assert(
         light_cache_growth % item_size == 0, "light_cache_growth not multiple of item size");
+    static_assert(
+        light_cache_growth_fast % item_size == 0, "light_cache_growth_fast not multiple of item size");
+
 
     if (epoch_number < 0 || epoch_number > max_epoch_number)
         return 0;
 
-    int num_items_upper_bound = num_items_init + epoch_number * num_items_growth;
+    //int num_items_upper_bound = num_items_init + epoch_number * num_items_growth;
+    int num_items_upper_bound = num_items_init;
+    if (epoch_number < epoch_threshold )
+        num_items_upper_bound = num_items_upper_bound + epoch_number * num_items_growth_fast;
+    else
+        num_items_upper_bound = num_items_upper_bound + epoch_threshold * num_items_growth_fast + (epoch_number-epoch_threshold)*num_items_growth;
+
     int num_items = ethash_find_largest_prime(num_items_upper_bound);
     return num_items;
 }
@@ -428,15 +458,25 @@ int ethash_calculate_full_dataset_num_items(int epoch_number) noexcept
     constexpr int item_size = sizeof(hash1024);
     constexpr int num_items_init = full_dataset_init_size / item_size;
     constexpr int num_items_growth = full_dataset_growth / item_size;
+    constexpr int num_items_growth_fast = full_dataset_growth_fast / item_size;
+
     static_assert(full_dataset_init_size % item_size == 0,
         "full_dataset_init_size not multiple of item size");
     static_assert(
         full_dataset_growth % item_size == 0, "full_dataset_growth not multiple of item size");
+    static_assert(
+        full_dataset_growth_fast % item_size == 0, "full_dataset_growth_fast not multiple of item size");
 
     if (epoch_number < 0 || epoch_number > max_epoch_number)
         return 0;
 
-    int num_items_upper_bound = num_items_init + epoch_number * num_items_growth;
+    //int num_items_upper_bound = num_items_init + epoch_number * num_items_growth;
+    int num_items_upper_bound = num_items_init;
+    if (epoch_number < epoch_threshold )
+        num_items_upper_bound = num_items_upper_bound + epoch_number * num_items_growth_fast;
+    else
+        num_items_upper_bound = num_items_upper_bound + epoch_threshold * num_items_growth_fast + (epoch_number-epoch_threshold)*num_items_growth;
+
     int num_items = ethash_find_largest_prime(num_items_upper_bound);
     return num_items;
 }

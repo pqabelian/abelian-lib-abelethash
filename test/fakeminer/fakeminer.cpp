@@ -2,6 +2,12 @@
 // Copyright 2018 Pawel Bylica.
 // Licensed under the Apache License, Version 2.0.
 
+/* abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+ * Copyright 2022-2023 Abelian Foundation.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+
 #include <ethash/ethash.hpp>
 #include <ethash/global_context.hpp>
 #include <atomic>
@@ -76,7 +82,8 @@ void worker(bool light, const ethash::hash256& header_hash, uint64_t start_nonce
     size_t w = static_cast<size_t>(batch_size);
     while (true)
     {
-        int block_number = shared_block_number.load(std::memory_order_relaxed);
+        // int block_number = shared_block_number.load(std::memory_order_relaxed);
+        int block_number = ethash::block_height_start + shared_block_number.load(std::memory_order_relaxed);
         if (block_number < 0)
             break;
 
@@ -99,7 +106,8 @@ void worker(bool light, const ethash::hash256& header_hash, uint64_t start_nonce
 int main(int argc, const char* argv[])
 {
     int num_blocks = 10;
-    int start_block_number = 0;
+    // int start_block_number = 0;
+    int start_block_number = ethash::block_height_start;
     int block_time = 6;
     int work_size = 100;
     int num_threads = static_cast<int>(std::thread::hardware_concurrency());

@@ -2,6 +2,12 @@
 // Copyright 2018 Pawel Bylica.
 // SPDX-License-Identifier: Apache-2.0
 
+/* abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+ * Copyright 2022-2023 Abelian Foundation.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+
 #include "keccak_utils.hpp"
 #include <cstdint>
 #include <cstring>
@@ -49,7 +55,9 @@ inline void keccak_default_aligned(uint64_t* out, const uint64_t* data, size_t s
 
     // Padding:
     auto block_bytes = reinterpret_cast<unsigned char*>(block);
-    block_bytes[size * sizeof(uint64_t)] = 0x01;
+    //  use 0x06 for standard SHA3.
+    // block_bytes[size * sizeof(uint64_t)] = 0x01;
+    block_bytes[size * sizeof(uint64_t)] = 0x06;
     block_bytes[block_size - 1] |= 0x80;
 
     xor_into_state(state, block, block_words);
@@ -93,7 +101,9 @@ inline void keccak_default(uint64_t* out, const uint8_t* data, size_t size) noex
     auto state_bytes = reinterpret_cast<uint8_t*>(state);
     xor_into_state(state_bytes, data, size);
 
-    state_bytes[size] ^= 0x01;
+    //  use 0x06 for standard SHA3.
+    // state_bytes[size] ^= 0x01;
+    state_bytes[size] ^= 0x06;
     state_bytes[block_size - 1] ^= 0x80;
 
     fake_keccakf1600(state);
@@ -152,7 +162,9 @@ inline void keccak_fastest(uint64_t* out, const uint8_t* data, size_t size)
         p_state_bytes[i] ^= data[i];
 
 
-    p_state_bytes[size] ^= 0x01;
+    //  use 0x06 for standard SHA3.
+    // p_state_bytes[size] ^= 0x01;
+    p_state_bytes[size] ^= 0x06;
     state.bytes[block_size - 1] ^= 0x80;
 
     fake_keccakf1600(state.words);

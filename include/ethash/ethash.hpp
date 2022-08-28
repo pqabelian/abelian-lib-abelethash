@@ -2,6 +2,12 @@
 // Copyright 2018-2019 Pawel Bylica.
 // Licensed under the Apache License, Version 2.0.
 
+/* abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+ * Copyright 2022-2023 Abelian Foundation.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+
 /// @file
 ///
 /// API design decisions:
@@ -38,12 +44,20 @@ namespace ethash
 {
 constexpr auto revision = ETHASH_REVISION;
 
+constexpr int block_height_start = ETHASH_BLOCK_HEIGHT_START;
+
+// ABEL uses epoch_threshold to specify an epoch before and after which the growth size of cache and dataset use different policy.
+constexpr int epoch_threshold = ETHASH_EPOCH_THRESHOLD;
+
 constexpr int epoch_length = ETHASH_EPOCH_LENGTH;
 constexpr int light_cache_item_size = ETHASH_LIGHT_CACHE_ITEM_SIZE;
 constexpr int full_dataset_item_size = ETHASH_FULL_DATASET_ITEM_SIZE;
 constexpr int num_dataset_accesses = ETHASH_NUM_DATASET_ACCESSES;
 
 constexpr int max_epoch_number = ETHASH_MAX_EPOCH_NUMBER;
+
+// ABEL uses EthashSeedStr to generate the ethashseed for epoch 0, rather than use all-zero as the ethashseed for epoch 0.
+constexpr auto ethash_seed_str = ETHASH_SEED_STR;
 
 using epoch_context = ethash_epoch_context;
 using epoch_context_full = ethash_epoch_context_full;
@@ -87,9 +101,13 @@ static constexpr auto calculate_epoch_seed = ethash_calculate_epoch_seed;
 
 
 /// Calculates the epoch number out of the block number.
-inline constexpr int get_epoch_number(int block_number) noexcept
+//inline constexpr int get_epoch_number(int block_number) noexcept
+//{
+//    return block_number / epoch_length;
+//}
+inline constexpr int get_epoch_number(int block_height) noexcept
 {
-    return block_number / epoch_length;
+    return (block_height - block_height_start) / epoch_length;
 }
 
 /**

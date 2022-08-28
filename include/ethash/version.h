@@ -6,13 +6,15 @@
 #pragma once
 
 /** The ethash library version. */
-#define ETHASH_VERSION "1.0.0"
+// #define ETHASH_VERSION "1.0.0"
+#define ABEL_ETHASH_VERSION "2.0.0-alpha.0"
 
 #ifdef __cplusplus
 namespace ethash
 {
 /// The ethash library version.
-constexpr auto version = ETHASH_VERSION;
+// constexpr auto version = ETHASH_VERSION;
+constexpr auto version = ABEL_ETHASH_VERSION;
 
 }  // namespace ethash
 #endif

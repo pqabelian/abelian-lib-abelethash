@@ -3,6 +3,12 @@
  * Licensed under the Apache License, Version 2.0.
  */
 
+/* abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+ * Copyright 2022-2023 Abelian Foundation.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+
 #pragma once
 
 #include <ethash/hash_types.h>
@@ -34,20 +40,41 @@ extern "C" {
  * The Ethash algorithm revision implemented as specified in the Ethash spec
  * https://github.com/ethereum/wiki/wiki/Ethash.
  */
-#define ETHASH_REVISION "23"
+/**
+ * The Ethash algorithm revision implemented as specified in the AbelEthash spec
+ * todo.
+ */
 
-#define ETHASH_EPOCH_LENGTH 30000
+// #define ETHASH_REVISION "23"
+#define ETHASH_REVISION "1"
+
+#define ETHASH_BLOCK_HEIGHT_START 56000
+
+#define ETHASH_EPOCH_THRESHOLD 8
+
+// #define ETHASH_EPOCH_LENGTH 30000
+#define ETHASH_EPOCH_LENGTH 4000
+
 #define ETHASH_LIGHT_CACHE_ITEM_SIZE 64
 #define ETHASH_FULL_DATASET_ITEM_SIZE 128
 #define ETHASH_NUM_DATASET_ACCESSES 64
 
+// ABEL uses EthashSeedStr to generate the ethashseed for epoch 0, rather than use all-zero as the ethashseed for epoch 0.
+#define ETHASH_SEED_STR "the seed string for cache and dataset"
+
 /// The maximum epoch number supported by this implementation.
-///
+/*///
 /// The value represents the last epoch where the light cache size fits 4GB size limit.
 /// It also allows to make some assumptions about the max values of datasets indices.
 /// The DAG size in the last epoch is 252GB and the block number is above 979M
 /// which gives over 60 years of blocks assuming 2s block times.
-#define ETHASH_MAX_EPOCH_NUMBER 32639
+#define ETHASH_MAX_EPOCH_NUMBER 32639*/
+
+/// The value represents the last epoch where the light cache size fits 2.6GB size limit.
+/// It also allows to make some assumptions about the max values of datasets indices.
+/// The DAG size in the last epoch is 160GB and the block number is above 40M
+/// which gives over 60 years of blocks assuming 50s block times.
+#define ETHASH_MAX_EPOCH_NUMBER 10240
 
 /** Ethash error codes. */
 enum ethash_errc

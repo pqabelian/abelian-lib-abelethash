@@ -2,6 +2,12 @@
 // Copyright 2018 Pawel Bylica.
 // Licensed under the Apache License, Version 2.0.
 
+/* abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+ * Copyright 2022-2023 Abelian Foundation.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+
 #include "../unittests/helpers.hpp"
 #include <benchmark/benchmark.h>
 #include <ethash/ethash-internal.hpp>
@@ -80,7 +86,9 @@ BENCHMARK(ethash_calculate_dataset_item_1024);
 static void ethash_hash(benchmark::State& state)
 {
     // Get block number in millions.
-    const int block_number = static_cast<int>(state.range(0)) * 1000000;
+    // const int block_number = static_cast<int>(state.range(0)) * 1000000;
+    const int block_number = ethash::block_height_start + static_cast<int>(state.range(0)) * 1000000;
+
     uint64_t nonce = 1;
 
     const auto& ctx = ethash::get_global_epoch_context(ethash::get_epoch_number(block_number));
