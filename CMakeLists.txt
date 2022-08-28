@@ -61,8 +61,8 @@ option(ETHASH_BUILD_ETHASH "Build ethash::ethash library (if NO only ethash::kec
 cmake_dependent_option(ETHASH_BUILD_GLOBAL_CONTEXT "Build ethash::global-context library" YES "ETHASH_BUILD_ETHASH" NO)
 
 # enable test, if necessary, turn off it
-#option(ETHASH_TESTING "Build unit tests" NO)
-option(ETHASH_TESTING "Build unit tests" YES)
+option(ETHASH_TESTING "Build unit tests" NO)
+#option(ETHASH_TESTING "Build unit tests" YES)
 
 add_subdirectory(lib)
 
