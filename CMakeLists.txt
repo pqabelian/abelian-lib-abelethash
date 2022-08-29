@@ -2,6 +2,11 @@
 # Copyright 2018 Pawel Bylica.
 # Licensed under the Apache License, Version 2.0.
 
+# abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+# Copyright 2022-2023 Abelian Foundation.
+# Licensed under the Apache License, Version 2.0.
+
+
 cmake_minimum_required(VERSION 3.16.2)
 
 include(cmake/cable/bootstrap.cmake)
@@ -56,9 +61,9 @@ option(ETHASH_INSTALL_CMAKE_CONFIG "Install CMake configuration scripts for find
 
 set(include_dir ${PROJECT_SOURCE_DIR}/include)
 
-option(ETHASH_BUILD_ETHASH "Build ethash::ethash library (if NO only ethash::keccak is built)" YES)
+option(ETHASH_BUILD_ETHASH "Build abelethash::ethash library (if NO only abelethash::keccak is built)" YES)
 
-cmake_dependent_option(ETHASH_BUILD_GLOBAL_CONTEXT "Build ethash::global-context library" YES "ETHASH_BUILD_ETHASH" NO)
+cmake_dependent_option(ETHASH_BUILD_GLOBAL_CONTEXT "Build abelethash::global-context library" YES "ETHASH_BUILD_ETHASH" NO)
 
 # enable test, if necessary, turn off it
 option(ETHASH_TESTING "Build unit tests" NO)
@@ -79,18 +84,18 @@ install(
 )
 
 if(ETHASH_INSTALL_CMAKE_CONFIG)
-    write_basic_package_version_file(ethashConfigVersion.cmake COMPATIBILITY SameMajorVersion)
-    configure_package_config_file(cmake/Config.cmake.in ethashConfig.cmake INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ethash)
+    write_basic_package_version_file(abelethashConfigVersion.cmake COMPATIBILITY SameMajorVersion)
+    configure_package_config_file(cmake/Config.cmake.in abelethashConfig.cmake INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/abelethash)
 
     install(
-        EXPORT ethashTargets
-        NAMESPACE ethash::
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ethash
+        EXPORT abelethashTargets
+        NAMESPACE abelethash::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/abelethash
     )
     install(
         FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/ethashConfig.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/ethashConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ethash
+        ${CMAKE_CURRENT_BINARY_DIR}/abelethashConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/abelethashConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/abelethash
     )
 endif()

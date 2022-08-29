@@ -2,6 +2,10 @@
 # Copyright 2018 Pawel Bylica.
 # Licensed under the Apache License, Version 2.0.
 
+# abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+# Copyright 2022-2023 Abelian Foundation.
+# Licensed under the Apache License, Version 2.0.
+
 include(GoogleTest)
 
 hunter_add_package(GTest)
@@ -21,7 +25,7 @@ add_executable(
 
 set_source_files_properties(test_version.cpp PROPERTIES COMPILE_DEFINITIONS TEST_PROJECT_VERSION="${PROJECT_VERSION}")
 
-target_link_libraries(ethash-test PRIVATE ethash::global-context ethash::experimental GTest::gtest_main)
+target_link_libraries(ethash-test PRIVATE abelethash::global-context abelethash::experimental GTest::gtest_main)
 target_include_directories(ethash-test PRIVATE ${ETHASH_PRIVATE_INCLUDE_DIR})
 set_target_properties(ethash-test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ..)
 

@@ -2,13 +2,21 @@
 # Copyright 2018-2019 Pawel Bylica.
 # Licensed under the Apache License, Version 2.0.
 
+# abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+# Copyright 2022-2023 Abelian Foundation.
+# Licensed under the Apache License, Version 2.0.
+
+# abelethash: C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+# Copyright 2022-2023 Abelian Foundation.
+# Licensed under the Apache License, Version 2.0.
+
 include(GNUInstallDirs)
 
 add_library(ethash)
-add_library(ethash::ethash ALIAS ethash)
+add_library(abelethash::ethash ALIAS ethash)
 target_compile_features(ethash PUBLIC c_std_11 cxx_std_14)
 set_target_properties(ethash PROPERTIES C_EXTENSIONS OFF CXX_EXTENSIONS OFF)
-target_link_libraries(ethash PRIVATE ethash::keccak)
+target_link_libraries(ethash PRIVATE abelethash::keccak)
 target_include_directories(ethash PUBLIC $<BUILD_INTERFACE:${include_dir}>$<INSTALL_INTERFACE:include>)
 target_sources(ethash PRIVATE
     endianness.hpp
@@ -28,7 +36,7 @@ endif()
 
 install(
     TARGETS ethash
-    EXPORT ethashTargets
+    EXPORT abelethashTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
