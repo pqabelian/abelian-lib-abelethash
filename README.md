@@ -1,19 +1,25 @@
-# Ethash
+# Abelethash
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![readme style standard](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/chfast/ethash/badge)](https://www.gitpoap.io/gh/chfast/ethash)
 
-> C/C++ implementation of Ethash – the Ethereum Proof of Work algorithm
+C/C++ implementation of AbelEthash, the Abelian Proof of Work algorithm.
+
+Abelethash is a fork of the C/C++ implementation of Ethash – the Ethereum Proof of Work algorithm (Ethash Copyright 2018 Pawel Bylica. Ethash is licensed under the Apache License, Version 2.0.). Ethash Github Source Code : https://github.com/ethereum/ethash
+
+For more details about Abelian Blockchain, please checkout the Abelian Foundation official website: https://www.abelian.info
 
 
 ## Table of Contents
 
-- [Install](#install)
-- [Usage](#usage)
-- [Test vectors](#test-vectors)
-- [Optimizations](#optimizations)
-- [Maintainer](#maintainer)
-- [License](#license)
+- [Abelethash](#abelethash)
+  - [Table of Contents](#table-of-contents)
+  - [Install](#install)
+  - [Usage](#usage)
+  - [Optimizations](#optimizations)
+    - [Seed hash is computed on the fly.](#seed-hash-is-computed-on-the-fly)
+    - [Dataset size is computed on the fly](#dataset-size-is-computed-on-the-fly)
+  - [License](#license)
 
 
 ## Install
@@ -54,17 +60,6 @@ prime number given an upper bound. For similar reasons as with seed hash, this
 is computed on the fly. The procedure used is quite naive and forks well only
 up to 40-bit number, so some additional improvement can be done in the future.
 
-
-## Maintainer
-
-Paweł Bylica [@chfast]
-
 ## License
 
 Licensed under the [Apache License, Version 2.0].
-
-
-[@chfast]: https://github.com/chfast
-[Apache License, Version 2.0]: LICENSE
-[ethash.hpp]: include/ethash/ethash.hpp
-[Ethash reference implementation]: https://github.com/ethereum/wiki/wiki/Ethash
